@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ExperienceSection() {
@@ -15,68 +14,42 @@ export default function ExperienceSection() {
     gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 15%",
-        end: "+=60%",
-        scrub: 0.5,
-        pin: section,
-        anticipatePin: 1,
+        start: "top 70%",        // Triggers when section top is at 70% of viewport height
+        end: "bottom 30%",       // Ends when section bottom is at 30% of viewport height
+        scrub: 1,                // Scrub for smoothness
+        // pin: false,           // COMMENT OUT or REMOVE pin
         markers: false
       }
     })
-      .fromTo(steps[0], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" })
-      .fromTo(steps[1], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "+=0.2")
-      .fromTo(steps[2], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "+=0.2")
-      .fromTo(steps[3], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "+=0.2");
+      .fromTo(steps, { opacity: 0, y: 60 }, { opacity: 1, y: 0, stagger: 0.15, duration: 1 });
 
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+    return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
   return (
     <section
-      id="experience-section"
       ref={sectionRef}
-      className="relative flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-b from-purple-700 to-blue-500 px-3 py-12 md:py-20"
-      style={{ backdropFilter: "blur(3px)" }}
+      id="experience-section"
+      className="min-h-screen flex flex-col items-center justify-center"
     >
-      <div className="w-full max-w-2xl bg-white/30 rounded-3xl shadow-2xl px-6 sm:px-10 py-10 md:py-14 border border-white/40 backdrop-blur-md">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-blue-700 text-center drop-shadow">
-          The LifEXP Experience
-        </h2>
-        <div className="flex flex-col gap-6 sm:gap-8 items-center w-full">
-          {[
-            "Choose your quest for the day.",
-            "Complete real-life challenges and grow.",
-            "Earn XP, level up, and unlock rewards.",
-            "Join exclusive, verified communities as you progress."
-          ].map((text, i) => (
-            <StepItem
-              key={i}
-              text={text}
-              ref={el => stepsRef.current[i] = el}
-            />
-          ))}
-        </div>
+      <h2 className="text-4xl font-bold text-blue-700 mb-10">The LifEXP Experience</h2>
+      <div className="flex flex-col gap-6 w-full max-w-2xl">
+        {[
+          "Choose your quest for the day.",
+          "Complete real-life challenges and grow.",
+          "Earn XP, level up, and unlock rewards.",
+          "Join exclusive, verified communities as you progress."
+        ].map((text, i) => (
+          <div
+            key={i}
+            ref={el => stepsRef.current[i] = el}
+            className="bg-white bg-opacity-10 rounded-xl px-8 py-6 shadow-lg text-blue-900 text-xl font-semibold w-full backdrop-blur"
+            style={{ opacity: 0, transform: "translateY(60px)" }}
+          >
+            {text}
+          </div>
+        ))}
       </div>
-      {/* Bottom fade to blend with CTA section */}
-      <div
-        className="absolute bottom-0 left-0 w-full h-16 pointer-events-none z-10"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(76,29,149,0), rgba(76,29,149,1) 95%)'
-          // rgba(76,29,149,1) = Tailwind's purple-700; adjust as needed to match your CTASection top color
-        }}
-      />
     </section>
   );
 }
-
-const StepItem = React.forwardRef(({ text }, ref) => (
-  <div
-    ref={ref}
-    className="bg-white/40 rounded-xl px-6 sm:px-8 py-4 sm:py-6 shadow-lg text-blue-800 text-base sm:text-xl font-semibold w-full text-center border border-white/30 backdrop-blur"
-    style={{ opacity: 0, transform: "translateY(60px)" }}
-  >
-    {text}
-  </div>
-));
