@@ -1,51 +1,51 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 
-// Custom Fairy SVG as close as possible to your reference
+// Fairy SVG with face!
 function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
   return (
-    <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
+    <svg width="60" height="70" viewBox="0 0 64 74" fill="none">
       {/* Wings (split "X" shape) */}
       <g>
         {/* Left Top */}
         <ellipse
           cx="18"
-          cy="26"
+          cy="30"
           rx="9"
           ry="18"
           fill="#98eaff"
           opacity="0.75"
-          transform={`rotate(-25 18 26) scale(${1 + 0.08 * wingFlap} 1)`}
+          transform={`rotate(-25 18 30) scale(${1 + 0.08 * wingFlap} 1)`}
         />
         {/* Right Top */}
         <ellipse
           cx="46"
-          cy="26"
+          cy="30"
           rx="9"
           ry="18"
           fill="#b3d0ff"
           opacity="0.7"
-          transform={`rotate(25 46 26) scale(${1 + 0.08 * wingFlap} 1)`}
+          transform={`rotate(25 46 30) scale(${1 + 0.08 * wingFlap} 1)`}
         />
         {/* Left Bottom */}
         <ellipse
           cx="18"
-          cy="42"
+          cy="48"
           rx="8"
           ry="14"
           fill="#b3f2e9"
           opacity="0.68"
-          transform={`rotate(20 18 42) scale(${1 - 0.08 * wingFlap} 1)`}
+          transform={`rotate(20 18 48) scale(${1 - 0.08 * wingFlap} 1)`}
         />
         {/* Right Bottom */}
         <ellipse
           cx="46"
-          cy="42"
+          cy="48"
           rx="8"
           ry="14"
           fill="#afe1fc"
           opacity="0.68"
-          transform={`rotate(-20 46 42) scale(${1 - 0.08 * wingFlap} 1)`}
+          transform={`rotate(-20 46 48) scale(${1 - 0.08 * wingFlap} 1)`}
         />
       </g>
       {/* Glow behind wand */}
@@ -75,8 +75,6 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
       {/* Ears */}
       <ellipse cx="42.5" cy="27.5" rx="3" ry="6" fill="#f8b45c" transform="rotate(18 42.5 27.5)" />
       <ellipse cx="21.5" cy="27.5" rx="3" ry="6" fill="#f8b45c" transform="rotate(-18 21.5 27.5)" />
-      {/* Face */}
-      <ellipse cx="32" cy="27" rx="6" ry="4.2" fill="#f3a14b" />
       {/* Hair (orange, covers ears, curved) */}
       <path
         d="M24,24 Q24,12 32,12 Q40,12 40,24 Q42,32 32,32 Q22,32 24,24Z"
@@ -90,26 +88,34 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
         d="M38,31 Q41,35 40,41 Q34,40 33,35 Q34,31 38,31Z"
         fill="#ffb347"
       />
+      {/* Face: eyes, smile, nose */}
+      {/* Eyes */}
+      <ellipse cx="29.3" cy="26" rx="1" ry="1.4" fill="#593c28" />
+      <ellipse cx="34.7" cy="26" rx="1" ry="1.4" fill="#593c28" />
+      {/* Smile */}
+      <path d="M30.8 28.4 Q32 29.7 33.2 28.4" stroke="#6c4425" strokeWidth="1" fill="none" />
+      {/* Nose */}
+      <ellipse cx="32" cy="27.7" rx="0.45" ry="0.8" fill="#dd9c55" />
       {/* Body/dress */}
-      <ellipse cx="32" cy="46" rx="10" ry="14" fill="#328254" />
+      <ellipse cx="32" cy="50" rx="10" ry="15" fill="#328254" />
       {/* Belt */}
-      <rect x="22" y="50" width="20" height="5" rx="2.5" fill="#a87b29" />
+      <rect x="22" y="58" width="20" height="5" rx="2.5" fill="#a87b29" />
       {/* Belt buckle */}
-      <ellipse cx="32" cy="52.5" rx="3.5" ry="2" fill="#ffe082" stroke="#a87b29" strokeWidth="1" />
+      <ellipse cx="32" cy="60.5" rx="3.5" ry="2" fill="#ffe082" stroke="#a87b29" strokeWidth="1" />
       {/* Star on dress */}
       <polygon
-        points="32,37 33.4,41 37.7,41 34.5,43.5 35.6,47.5 32,45 28.4,47.5 29.5,43.5 26.3,41 30.6,41"
+        points="32,41 33.4,45 37.7,45 34.5,47.5 35.6,51.5 32,49 28.4,51.5 29.5,47.5 26.3,45 30.6,45"
         fill="#ffe082"
         opacity="0.9"
       />
       {/* Arm Left (holds wand) */}
-      <rect x="11" y="30" width="8" height="7" rx="4" fill="#f8b45c" transform="rotate(-18 15 34)" />
+      <rect x="11" y="34" width="8" height="7" rx="4" fill="#f8b45c" transform="rotate(-18 15 37.5)" />
       {/* Arm Right */}
-      <rect x="43" y="34" width="8" height="7" rx="4" fill="#f8b45c" transform="rotate(20 47 37.5)" />
+      <rect x="43" y="38" width="8" height="7" rx="4" fill="#f8b45c" transform="rotate(20 47 41.5)" />
       {/* Hand on wand */}
-      <ellipse cx="16" cy="39" rx="3" ry="2.2" fill="#f8b45c" />
+      <ellipse cx="16" cy="43" rx="3" ry="2.2" fill="#f8b45c" />
       {/* Hand right */}
-      <ellipse cx="51.5" cy="40.5" rx="2.2" ry="2" fill="#f8b45c" />
+      <ellipse cx="51.5" cy="44.5" rx="2.2" ry="2" fill="#f8b45c" />
       {/* SVG filter for glow */}
       <defs>
         <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -128,15 +134,15 @@ export default function FairyAnimation({ onFinish }) {
   const audioRef = useRef();
   const [sparkles, setSparkles] = useState([]);
   const fairyX = useMotionValue(-60);
-  const fairyY = useMotionValue(60);
+  const fairyY = useMotionValue(70); // Start lower so fairy is centered
   const [wingFlap, setWingFlap] = useState(0);
   const [wandGlow, setWandGlow] = useState(1);
 
   // Animation settings
   const flyLength = typeof window !== "undefined" ? window.innerWidth + 100 : 900;
-  const DURATION = 2.6; // seconds
+  const DURATION = 2.6;
 
-  // Wing and wand animation
+  // Wing/wand animation
   useEffect(() => {
     let mounted = true;
     let t = 0;
@@ -161,44 +167,48 @@ export default function FairyAnimation({ onFinish }) {
     }
   }, []);
 
-  // Fairy flight path
+  // Fairy flight path - keep fairy from being clipped
   useAnimationFrame((t) => {
     const progress = Math.min(t / (DURATION * 1000), 1);
     const pathX = -60 + (flyLength + 60) * progress;
-    // Bee-line curve
+    // Arc but keep fairy from going offscreen vertically
+    const yCenter = 75;
+    const ySwing = 32;
     const yPath =
-      60 +
-      50 * Math.sin(progress * Math.PI * 1.5) -
-      15 * Math.sin(progress * Math.PI * 3);
+      yCenter +
+      ySwing * Math.sin(progress * Math.PI * 1.5) -
+      10 * Math.sin(progress * Math.PI * 3);
     fairyX.set(pathX);
     fairyY.set(yPath);
 
-    // Emit sparkles (trailing behind fairy)
-    if (Math.random() < 0.4) {
-      setSparkles((prev) => [
-        ...prev,
-        {
-          id: Math.random() + "" + t,
-          x: pathX - 8,
-          y: yPath + 9,
-          angle: Math.random() * 90 - 45,
-          drift: Math.random() * 24 - 12,
-          size: 2 + Math.random() * 1.5,
-          opacity: 0.45 + Math.random() * 0.55,
-          lifetime: 0,
-        },
-      ]);
+    // Emit more, smaller dots for pixie dust trail
+    for (let i = 0; i < 2; i++) {
+      if (Math.random() < 0.8) {
+        setSparkles((prev) => [
+          ...prev,
+          {
+            id: Math.random() + "" + t + i,
+            x: pathX - 8 + Math.random() * 2,
+            y: yPath + 15 + Math.random() * 2,
+            drift: Math.random() * 26 - 13,
+            size: 1.5 + Math.random() * 1.2,
+            opacity: 0.38 + Math.random() * 0.55,
+            color: ["#fffbe7", "#e6f7ff", "#ffe082", "#b3e5fc"][Math.floor(Math.random() * 4)],
+            lifetime: 0,
+          },
+        ]);
+      }
     }
   });
 
-  // Sparkle animation
+  // Animate and fade out old sparkles
   useEffect(() => {
     if (sparkles.length === 0) return;
     const anim = setInterval(() => {
       setSparkles((prev) =>
         prev
           .map((sp) => ({ ...sp, lifetime: sp.lifetime + 60 }))
-          .filter((sp) => sp.lifetime < 720)
+          .filter((sp) => sp.lifetime < 800)
       );
     }, 60);
     return () => clearInterval(anim);
@@ -208,35 +218,31 @@ export default function FairyAnimation({ onFinish }) {
     <>
       <svg
         width={flyLength}
-        height="160"
+        height="190"
         style={{
           position: "fixed",
           left: 0,
-          top: 90,
+          top: 60,
           zIndex: 9999,
           pointerEvents: "none",
         }}
       >
-        {/* Fairy Dust Sparkles */}
+        {/* Pixie dust sparkles (dense, small dots, pastel colors) */}
         {sparkles.map((sp) => (
-          <g key={sp.id}>
-            <motion.polygon
-              points="2,0 4,4 0,3 4,3 0,4"
-              fill="#fffbe7"
-              opacity={sp.opacity * (1 - sp.lifetime / 700)}
-              style={{
-                transform: `translate(${sp.x + sp.lifetime * sp.drift * 0.0025}px,${sp.y +
-                  sp.lifetime * 0.09 +
-                  Math.sin(sp.lifetime / 60 + sp.angle) *
-                    2.5}px) scale(${sp.size * (1 - sp.lifetime / 700) * 0.6}) rotate(${
-                  sp.angle + sp.lifetime * 0.1
-                }deg)`,
-                filter: "drop-shadow(0 0 3px #fffbe7) drop-shadow(0 0 10px #b3e5fc80)",
-              }}
-            />
-          </g>
+          <motion.circle
+            key={sp.id}
+            cx={sp.x + sp.lifetime * sp.drift * 0.0018}
+            cy={sp.y + sp.lifetime * 0.13}
+            r={sp.size * (1 - sp.lifetime / 850)}
+            fill={sp.color}
+            opacity={sp.opacity * (1 - sp.lifetime / 800)}
+            style={{
+              filter:
+                "drop-shadow(0 0 3px #fffbe7) drop-shadow(0 0 9px #b3e5fc88)",
+            }}
+          />
         ))}
-        {/* Fairy Group */}
+        {/* Fairy */}
         <motion.g
           initial={{ opacity: 1 }}
           animate={{ opacity: [1, 1, 1, 0] }}
@@ -249,7 +255,7 @@ export default function FairyAnimation({ onFinish }) {
             }}
             animate={{
               x: flyLength + 60,
-              y: 40,
+              y: 70,
             }}
             transition={{
               duration: DURATION,
@@ -257,7 +263,6 @@ export default function FairyAnimation({ onFinish }) {
               onComplete: onFinish,
             }}
           >
-            {/* Fairy SVG */}
             <FairySVG wingFlap={wingFlap} wandGlow={wandGlow} />
           </motion.g>
         </motion.g>
