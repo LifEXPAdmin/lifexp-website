@@ -18,7 +18,7 @@ export default function FounderPage() {
             </div>
 
         <p className="text-lg text-gray-800 leading-relaxed mb-4">
-          Hi, I’m <span className="font-semibold">Andrew McCuen</span>—the founder of LifEXP, a plumber, parent, and someone who’s spent years searching for purpose and real-life growth.
+          Hi, I’m <span className="font-semibold">Andrew McCuen</span>—the founder of LifEXP, a husband, parent, plumber and someone who’s spent years searching for purpose and real-life growth.
         </p>
         <p className="text-lg text-gray-800 leading-relaxed mb-4">
           I started this journey because, like so many, I struggled with traditional productivity tools that felt cold, overwhelming, and never really changed my habits.
