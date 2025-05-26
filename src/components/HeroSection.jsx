@@ -1,51 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import FairyAnimation from "./FairyAnimation"; // import this at the top
-
-gsap.registerPlugin(ScrollTrigger);
+import React, { useState } from "react";
+import FairyAnimation from "./FairyAnimation";
 
 export default function HeroSection() {
-  const heroRef = useRef();
   const [showFairy, setShowFairy] = useState(false);
 
-  useEffect(() => {
-    gsap.fromTo(
-      heroRef.current,
-      { opacity: 1, y: 0 },
-      {
-        opacity: 0,
-        y: -100,
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-          pin: false,
-        },
-      }
-    );
-  }, []);
-
-  // Handler for Get Started button
   const handleGetStarted = () => {
     setShowFairy(true);
-  };
-
-  // Handler when fairy animation completes
-  const handleFairyFinish = () => {
-    setShowFairy(false);
-    // Smooth scroll to CTA section
-    const cta = document.getElementById("cta-section");
-    if (cta) {
-      cta.scrollIntoView({ behavior: "smooth" });
-    }
+    setTimeout(() => {
+      // Scroll to the feature section smoothly
+      const featureSection = document.getElementById("feature-section");
+      if (featureSection) {
+        featureSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 1200); // Start scroll about when fairy is halfway
+    setTimeout(() => setShowFairy(false), 1800); // Remove fairy after animation
   };
 
   return (
     <section
       id="hero-section"
-      ref={heroRef}
       className="flex flex-col items-center justify-center min-h-[70vh] px-4 md:px-0 bg-gradient-to-br from-blue-600 via-purple-700 to-blue-400 text-center relative"
       style={{ backdropFilter: "blur(2px)" }}
     >
@@ -62,8 +35,8 @@ export default function HeroSection() {
         >
           Get Started
         </button>
-        {showFairy && <FairyAnimation onFinish={handleFairyFinish} />}
       </div>
+      {showFairy && <FairyAnimation onFinish={() => setShowFairy(false)} />}
     </section>
   );
 }
