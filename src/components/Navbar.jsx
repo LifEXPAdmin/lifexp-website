@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// Nav links for both routing and scrolling
 const navLinks = [
   { label: "Home", id: "hero-section" },
   { label: "Features", id: "feature-section" },
   { label: "Experience", id: "experience-section" },
+  { label: "Updates", path: "/updates" },
   { label: "About", path: "/about" },
   { label: "Join", id: "cta-section" }
 ];
@@ -14,9 +16,10 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Main nav handler
   const handleNav = (link) => {
     if (link.path) {
-      // Route navigation (e.g. About)
+      // Route navigation (e.g. About, Updates)
       if (location.pathname !== link.path) {
         navigate(link.path);
       }
@@ -36,12 +39,13 @@ export default function Navbar() {
           if (section) {
             section.scrollIntoView({ behavior: "smooth" });
           }
-        }, 100);
+        }, 300); // Give router time to switch page before scroll
         setOpen(false);
       }
     }
   };
 
+  // Logo/Home handler
   const handleHome = () => {
     if (location.pathname !== "/") {
       navigate("/");

@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import TermsPage from "./components/TermsPage";
 import PrivacyPage from "./components/PrivacyPage";
 import TestimonialSection from "./components/TestimonialSection";
+import UpdatesPage from "./components/UpdatesPage";
 
 function MainContent() {
   return (
@@ -38,6 +39,7 @@ function AnimatedRoutes() {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/about" element={<FounderPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/updates" element={<UpdatesPage />} />
       </Routes>
     </AnimatePresence>
   );
