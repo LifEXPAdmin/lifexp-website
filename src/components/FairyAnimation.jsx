@@ -1,34 +1,70 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-// Helper: Create glitter trail positions based on fairy's path
-const trailSegments = [
-  { dx: 0, dy: 0 },
-  { dx: 90, dy: 15 },
-  { dx: 180, dy: 40 },
-  { dx: 280, dy: 0 },
-  { dx: 410, dy: 35 },
-  { dx: 580, dy: 20 },
-  { dx: 740, dy: 30 }
-];
+const NUM_SPARKLES = 10;
+const SPARKLE_INTERVAL = 250; // ms between sparkles (adjust for more/less)
+const FLY_TIME = 2.8; // seconds for fairy animation
+
+// Generate random sparkle attributes
+function randomSparkleProps() {
+  return {
+    dx: Math.random() * 20 - 10,
+    dy: Math.random() * 10 - 5,
+    rotate: Math.random() * 120 - 60,
+    scale: 0.7 + Math.random() * 0.8,
+    duration: 0.85 + Math.random() * 0.45
+  };
+}
 
 export default function FairyAnimation({ onFinish }) {
+  const [sparkles, setSparkles] = useState([]);
   const audioRef = useRef();
   const flyLength = typeof window !== "undefined" ? window.innerWidth + 100 : 900;
+  const fairyPath = [ -60, 120, 280, 410, 580, flyLength ];
 
   useEffect(() => {
+    // Play sound
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.volume = 0.7;
       audioRef.current.play();
     }
+    // Sparkle emission
+    let sparkleIdx = 0;
+    let running = true;
+    function emitSparkle() {
+      if (!running || sparkleIdx >= NUM_SPARKLES) return;
+      const progress = sparkleIdx / NUM_SPARKLES;
+      // Fairy's position along the X path at this progress
+      const x =
+        fairyPath[0] +
+        (fairyPath[fairyPath.length - 1] - fairyPath[0]) * progress;
+      setSparkles((sp) => [
+        ...sp,
+        { id: Math.random(), x, ...randomSparkleProps() }
+      ]);
+      sparkleIdx += 1;
+      setTimeout(emitSparkle, SPARKLE_INTERVAL);
+    }
+    emitSparkle();
+    return () => {
+      running = false;
+    };
   }, []);
+
+  // Remove sparkles after they're done
+  useEffect(() => {
+    if (sparkles.length > 0) {
+      const cleanup = setTimeout(() => setSparkles([]), 1800);
+      return () => clearTimeout(cleanup);
+    }
+  }, [sparkles]);
 
   return (
     <>
       <motion.svg
         width={flyLength}
-        height="150"
+        height="160"
         style={{
           position: "fixed",
           left: 0,
@@ -37,42 +73,55 @@ export default function FairyAnimation({ onFinish }) {
           pointerEvents: "none"
         }}
       >
-        {/* Glitter Trail */}
-        {trailSegments.map((seg, i) => (
-          <motion.circle
-            key={i}
-            cx={seg.dx}
-            cy={seg.dy + 25 + (i % 2 === 0 ? -10 : 10)}
-            r={Math.max(1.5, 3 - i * 0.3)}
-            fill={i % 2 === 0 ? "#fffde7" : "#b3e5fc"}
-            initial={{ opacity: 0 }}
+        {/* Sparkles */}
+        {sparkles.map((sp, i) => (
+          <motion.g
+            key={sp.id}
+            initial={{
+              opacity: 0.85,
+              x: sp.x,
+              y: 45 + sp.dy,
+              scale: sp.scale,
+              rotate: sp.rotate
+            }}
             animate={{
-              opacity: [0, 0.6, 0],
-              scale: [1, 1.3, 1],
+              opacity: 0,
+              y: 45 + sp.dy + 35 + Math.random() * 10,
+              scale: sp.scale * 1.45
             }}
             transition={{
-              delay: 0.2 + i * 0.15,
-              duration: 1.8,
-              repeat: Infinity,
-              repeatDelay: trailSegments.length * 0.1 - i * 0.08
+              duration: sp.duration,
+              ease: "easeOut"
             }}
-          />
+          >
+            {/* Star-shaped sparkle */}
+            <polygon
+              points="8,0 10,6 16,6.5 11.5,10.5 13,17 8,13.5 3,17 4.5,10.5 0,6.5 6,6"
+              fill="#fffde7"
+              opacity="0.85"
+              style={{ filter: "drop-shadow(0 0 4px #fffbe7)" }}
+            />
+            <polygon
+              points="8,3 9,7 13,7.3 10,9.5 11,13 8,11 5,13 6,9.5 3,7.3 7,7"
+              fill="#b3e5fc"
+              opacity="0.65"
+            />
+          </motion.g>
         ))}
-
         {/* Fairy */}
         <motion.g
           initial={{ opacity: 1 }}
           animate={{ opacity: [1, 1, 1, 0] }}
-          transition={{ duration: 4, times: [0, 0.8, 0.98, 1] }}
+          transition={{ duration: FLY_TIME + 0.5, times: [0, 0.85, 0.97, 1] }}
         >
           <motion.g
             initial={{ x: -60, y: 60 }}
             animate={{
-              x: [ -60, 120, 280, 410, 580, flyLength ],
-              y: [ 60, 30, 0, 35, 20, 40 ]
+              x: fairyPath,
+              y: [60, 30, 0, 35, 20, 40]
             }}
             transition={{
-              duration: 4.2,
+              duration: FLY_TIME,
               ease: "easeInOut",
               onComplete: onFinish
             }}

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import FairyAnimation from "./FairyAnimation";
 
-// Custom slow scroll function
-function smoothScrollToFeatureSection(duration = 1500) {
+// Custom scroll, now FASTER (900ms)
+function smoothScrollToFeatureSection(duration = 900) {
   const target = document.getElementById("feature-section");
   if (!target) return;
   const targetY = target.getBoundingClientRect().top + window.scrollY - 30; // adjust offset
@@ -53,8 +53,7 @@ export default function HeroSection() {
         <FairyAnimation
           onFinish={() => {
             setShowFairy(false);
-            // After the fairy finishes (4 seconds), slow scroll over 1.5s
-            setTimeout(() => smoothScrollToFeatureSection(1800), 200); // Add a slight magic pause
+            setTimeout(() => smoothScrollToFeatureSection(900), 200); // Magic pause, then quick scroll
           }}
         />
       )}
