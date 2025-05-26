@@ -1,32 +1,29 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// Nav links for both routing and scrolling
 const navLinks = [
   { label: "Home", id: "hero-section" },
   { label: "Features", id: "feature-section" },
   { label: "Experience", id: "experience-section" },
   { label: "Updates", path: "/updates" },
   { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
-  { label: "Join", id: "cta-section" }
 ];
+
+const contactLink = { label: "Contact", path: "/contact" };
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Main nav handler
+  // Nav handler
   const handleNav = (link) => {
     if (link.path) {
-      // Route navigation (e.g. About, Updates)
       if (location.pathname !== link.path) {
         navigate(link.path);
       }
       setOpen(false);
     } else if (link.id) {
-      // Scroll navigation (sections on homepage)
       if (location.pathname === "/") {
         const section = document.getElementById(link.id);
         if (section) {
@@ -40,7 +37,7 @@ export default function Navbar() {
           if (section) {
             section.scrollIntoView({ behavior: "smooth" });
           }
-        }, 300); // Give router time to switch page before scroll
+        }, 300);
         setOpen(false);
       }
     }
@@ -63,14 +60,12 @@ export default function Navbar() {
         <span
           className="font-bold text-2xl text-blue-600 select-none cursor-pointer tracking-tight drop-shadow"
           onClick={handleHome}
-          style={{
-            textShadow: "0 2px 8px rgba(76,29,149,0.05)"
-          }}
+          style={{ textShadow: "0 2px 8px rgba(76,29,149,0.05)" }}
         >
           LifEXP
         </span>
         {/* Desktop Nav */}
-        <ul className="hidden md:flex gap-8 items-center">
+        <ul className="hidden md:flex gap-6 items-center">
           {navLinks.map((link) => (
             <li key={link.label}>
               <button
@@ -81,6 +76,14 @@ export default function Navbar() {
               </button>
             </li>
           ))}
+          <li>
+            <button
+              className="ml-2 px-5 py-2 bg-blue-600 text-white font-semibold rounded-xl shadow hover:bg-purple-600 transition"
+              onClick={() => handleNav(contactLink)}
+            >
+              Contact
+            </button>
+          </li>
         </ul>
         {/* Hamburger Menu for Mobile */}
         <button
@@ -99,7 +102,7 @@ export default function Navbar() {
       </div>
       {/* Mobile Menu */}
       <div className={`${open ? "block" : "hidden"} md:hidden bg-white/95 shadow-lg backdrop-blur absolute w-full left-0 mt-2 py-2 rounded-b-2xl`}>
-        <ul className="flex flex-col gap-4 py-2 px-6">
+        <ul className="flex flex-col gap-2 py-2 px-6">
           {navLinks.map((link) => (
             <li key={link.label}>
               <button
@@ -110,6 +113,14 @@ export default function Navbar() {
               </button>
             </li>
           ))}
+          <li>
+            <button
+              className="mt-2 w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow hover:bg-purple-600 transition"
+              onClick={() => handleNav(contactLink)}
+            >
+              Contact
+            </button>
+          </li>
         </ul>
       </div>
     </nav>
