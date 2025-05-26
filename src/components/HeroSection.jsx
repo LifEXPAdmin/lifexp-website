@@ -1,32 +1,17 @@
 import React, { useState } from "react";
 import FairyAnimation from "./FairyAnimation";
 
-// Custom scroll, now FASTER (900ms)
-function smoothScrollToFeatureSection(duration = 900) {
-  const target = document.getElementById("feature-section");
-  if (!target) return;
-  const targetY = target.getBoundingClientRect().top + window.scrollY - 30; // adjust offset
-  const startY = window.scrollY;
-  const diff = targetY - startY;
-  let start;
-
-  function step(timestamp) {
-    if (!start) start = timestamp;
-    const time = timestamp - start;
-    const percent = Math.min(time / duration, 1);
-    window.scrollTo(0, startY + diff * percent);
-    if (percent < 1) {
-      requestAnimationFrame(step);
-    }
-  }
-  requestAnimationFrame(step);
-}
-
 export default function HeroSection() {
   const [showFairy, setShowFairy] = useState(false);
 
-  const handleGetStarted = () => {
-    setShowFairy(true);
+  // This function is called after the fairy finishes flying
+  const handleFairyFinish = () => {
+    setShowFairy(false);
+    // Now scroll to the feature-section smoothly
+    const feature = document.getElementById("feature-section");
+    if (feature) {
+      feature.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -44,19 +29,13 @@ export default function HeroSection() {
         </p>
         <button
           className="px-7 py-3 sm:px-8 sm:py-4 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-blue-100 transition text-lg md:text-xl"
-          onClick={handleGetStarted}
+          onClick={() => setShowFairy(true)}
+          disabled={showFairy}
         >
           Get Started
         </button>
       </div>
-      {showFairy && (
-        <FairyAnimation
-          onFinish={() => {
-            setShowFairy(false);
-            setTimeout(() => smoothScrollToFeatureSection(900), 200); // Magic pause, then quick scroll
-          }}
-        />
-      )}
+      {showFairy && <FairyAnimation onFinish={handleFairyFinish} />}
     </section>
   );
 }
