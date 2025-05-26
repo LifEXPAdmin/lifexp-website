@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 import FairyAnimation from "./FairyAnimation";
 
-// Helper for a slower, smooth scroll
-function scrollToFeatureSection() {
-  const featureSection = document.getElementById("feature-section");
-  if (!featureSection) return;
-  const y = featureSection.getBoundingClientRect().top + window.scrollY - 30; // adjust offset if needed
-  window.scrollTo({
-    top: y,
-    behavior: "smooth"
-  });
+// Custom slow scroll function
+function smoothScrollToFeatureSection(duration = 1500) {
+  const target = document.getElementById("feature-section");
+  if (!target) return;
+  const targetY = target.getBoundingClientRect().top + window.scrollY - 30; // adjust offset
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  let start;
+
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const time = timestamp - start;
+    const percent = Math.min(time / duration, 1);
+    window.scrollTo(0, startY + diff * percent);
+    if (percent < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+  requestAnimationFrame(step);
 }
 
 export default function HeroSection() {
@@ -43,7 +53,8 @@ export default function HeroSection() {
         <FairyAnimation
           onFinish={() => {
             setShowFairy(false);
-            setTimeout(scrollToFeatureSection, 180); // Slight pause after fairy for "magic" feel
+            // After the fairy finishes (4 seconds), slow scroll over 1.5s
+            setTimeout(() => smoothScrollToFeatureSection(1800), 200); // Add a slight magic pause
           }}
         />
       )}
