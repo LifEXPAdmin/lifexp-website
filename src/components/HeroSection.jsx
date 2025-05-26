@@ -39,7 +39,15 @@ export default function HeroSection() {
         <p className="text-lg sm:text-xl md:text-2xl text-blue-900 mb-6 max-w-2xl mx-auto">
           Gamify your life. Level up every day.
         </p>
-        <button className="px-7 py-3 sm:px-8 sm:py-4 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-blue-100 transition text-lg md:text-xl">
+        <button
+          className="px-7 py-3 sm:px-8 sm:py-4 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-blue-100 transition text-lg md:text-xl"
+          onClick={() => {
+            const cta = document.getElementById("cta-section");
+            if (cta) {
+              cta.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+        >
           Get Started
         </button>
       </div>
