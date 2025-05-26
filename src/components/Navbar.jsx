@@ -5,6 +5,7 @@ const navLinks = [
   { label: "Home", id: "hero-section" },
   { label: "Features", id: "feature-section" },
   { label: "Experience", id: "experience-section" },
+  { label: "About", path: "/about" },
   { label: "Join", id: "cta-section" }
 ];
 

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import FounderPage from "./components/FounderPage";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -35,6 +36,7 @@ function AnimatedRoutes() {
       <Routes key={location.pathname} location={location}>
         <Route path="/" element={<MainContent />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/about" element={<FounderPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
       </Routes>
     </AnimatePresence>
