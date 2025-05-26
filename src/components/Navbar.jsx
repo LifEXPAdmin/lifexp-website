@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Experience", id: "experience-section" },
   { label: "Updates", path: "/updates" },
   { label: "About", path: "/about" },
+  { label: "Contact", path: "/contact" },
   { label: "Join", id: "cta-section" }
 ];
 

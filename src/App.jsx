@@ -12,6 +12,8 @@ import TermsPage from "./components/TermsPage";
 import PrivacyPage from "./components/PrivacyPage";
 import TestimonialSection from "./components/TestimonialSection";
 import UpdatesPage from "./components/UpdatesPage";
+import ContactPage from "./components/ContactPage";
+
 
 function MainContent() {
   return (
@@ -29,7 +31,7 @@ function MainContent() {
   );
 }
 
-// AnimatedRoutes handles animated transitions between pages
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -40,10 +42,12 @@ function AnimatedRoutes() {
         <Route path="/about" element={<FounderPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/updates" element={<UpdatesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </AnimatePresence>
   );
 }
+
 
 export default function App() {
   return (
