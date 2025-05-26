@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 
-// Fairy SVG with face!
+// Detailed Fairy SVG based on your Instagram fairy
 function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
   return (
-    <svg width="60" height="70" viewBox="0 0 64 74" fill="none">
+    <svg width="60" height="74" viewBox="0 0 64 74" fill="none">
       {/* Wings (split "X" shape) */}
       <g>
         {/* Left Top */}
@@ -75,7 +75,7 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
       {/* Ears */}
       <ellipse cx="42.5" cy="27.5" rx="3" ry="6" fill="#f8b45c" transform="rotate(18 42.5 27.5)" />
       <ellipse cx="21.5" cy="27.5" rx="3" ry="6" fill="#f8b45c" transform="rotate(-18 21.5 27.5)" />
-      {/* Hair (orange, covers ears, curved) */}
+      {/* Hair */}
       <path
         d="M24,24 Q24,12 32,12 Q40,12 40,24 Q42,32 32,32 Q22,32 24,24Z"
         fill="#ffb347"
@@ -89,18 +89,14 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
         fill="#ffb347"
       />
       {/* Face: eyes, smile, nose */}
-      {/* Eyes */}
       <ellipse cx="29.3" cy="26" rx="1" ry="1.4" fill="#593c28" />
       <ellipse cx="34.7" cy="26" rx="1" ry="1.4" fill="#593c28" />
-      {/* Smile */}
       <path d="M30.8 28.4 Q32 29.7 33.2 28.4" stroke="#6c4425" strokeWidth="1" fill="none" />
-      {/* Nose */}
       <ellipse cx="32" cy="27.7" rx="0.45" ry="0.8" fill="#dd9c55" />
       {/* Body/dress */}
       <ellipse cx="32" cy="50" rx="10" ry="15" fill="#328254" />
       {/* Belt */}
       <rect x="22" y="58" width="20" height="5" rx="2.5" fill="#a87b29" />
-      {/* Belt buckle */}
       <ellipse cx="32" cy="60.5" rx="3.5" ry="2" fill="#ffe082" stroke="#a87b29" strokeWidth="1" />
       {/* Star on dress */}
       <polygon
@@ -134,15 +130,15 @@ export default function FairyAnimation({ onFinish }) {
   const audioRef = useRef();
   const [sparkles, setSparkles] = useState([]);
   const fairyX = useMotionValue(-60);
-  const fairyY = useMotionValue(70); // Start lower so fairy is centered
+  const fairyY = useMotionValue(70);
   const [wingFlap, setWingFlap] = useState(0);
   const [wandGlow, setWandGlow] = useState(1);
 
   // Animation settings
   const flyLength = typeof window !== "undefined" ? window.innerWidth + 100 : 900;
-  const DURATION = 2.6;
+  const DURATION = 2.6; // seconds
 
-  // Wing/wand animation
+  // Animate wings and wand glow
   useEffect(() => {
     let mounted = true;
     let t = 0;
@@ -158,7 +154,7 @@ export default function FairyAnimation({ onFinish }) {
     return () => { mounted = false; };
   }, []);
 
-  // Sound
+  // Play sound
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
@@ -167,11 +163,11 @@ export default function FairyAnimation({ onFinish }) {
     }
   }, []);
 
-  // Fairy flight path - keep fairy from being clipped
+  // Animate fairy flight and sparkle trail
   useAnimationFrame((t) => {
     const progress = Math.min(t / (DURATION * 1000), 1);
     const pathX = -60 + (flyLength + 60) * progress;
-    // Arc but keep fairy from going offscreen vertically
+    // Arc, ensure fairy stays visible
     const yCenter = 75;
     const ySwing = 32;
     const yPath =
@@ -181,7 +177,7 @@ export default function FairyAnimation({ onFinish }) {
     fairyX.set(pathX);
     fairyY.set(yPath);
 
-    // Emit more, smaller dots for pixie dust trail
+    // Dense, small dots for pixie dust
     for (let i = 0; i < 2; i++) {
       if (Math.random() < 0.8) {
         setSparkles((prev) => [
@@ -191,8 +187,8 @@ export default function FairyAnimation({ onFinish }) {
             x: pathX - 8 + Math.random() * 2,
             y: yPath + 15 + Math.random() * 2,
             drift: Math.random() * 26 - 13,
-            size: 1.5 + Math.random() * 1.2,
-            opacity: 0.38 + Math.random() * 0.55,
+            size: 1.3 + Math.random() * 1,
+            opacity: 0.36 + Math.random() * 0.5,
             color: ["#fffbe7", "#e6f7ff", "#ffe082", "#b3e5fc"][Math.floor(Math.random() * 4)],
             lifetime: 0,
           },
@@ -201,7 +197,7 @@ export default function FairyAnimation({ onFinish }) {
     }
   });
 
-  // Animate and fade out old sparkles
+  // Fade out sparkles
   useEffect(() => {
     if (sparkles.length === 0) return;
     const anim = setInterval(() => {
@@ -227,7 +223,7 @@ export default function FairyAnimation({ onFinish }) {
           pointerEvents: "none",
         }}
       >
-        {/* Pixie dust sparkles (dense, small dots, pastel colors) */}
+        {/* Pixie dust sparkles */}
         {sparkles.map((sp) => (
           <motion.circle
             key={sp.id}
