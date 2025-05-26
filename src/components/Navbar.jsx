@@ -14,27 +14,34 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Helper to scroll to a section if on home, or go home and scroll after navigation
-  const handleNav = (id) => {
-    if (location.pathname === "/") {
-      const section = document.getElementById(id);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
+  const handleNav = (link) => {
+    if (link.path) {
+      // Route navigation (e.g. About)
+      if (location.pathname !== link.path) {
+        navigate(link.path);
       }
       setOpen(false);
-    } else {
-      navigate("/");
-      setTimeout(() => {
-        const section = document.getElementById(id);
+    } else if (link.id) {
+      // Scroll navigation (sections on homepage)
+      if (location.pathname === "/") {
+        const section = document.getElementById(link.id);
         if (section) {
           section.scrollIntoView({ behavior: "smooth" });
         }
-      }, 100);
-      setOpen(false);
+        setOpen(false);
+      } else {
+        navigate("/");
+        setTimeout(() => {
+          const section = document.getElementById(link.id);
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+        setOpen(false);
+      }
     }
   };
 
-  // Click home/logo always routes to homepage
   const handleHome = () => {
     if (location.pathname !== "/") {
       navigate("/");
@@ -60,10 +67,10 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <ul className="hidden md:flex gap-8 items-center">
           {navLinks.map((link) => (
-            <li key={link.id}>
+            <li key={link.label}>
               <button
                 className="text-blue-700 font-semibold hover:text-purple-700 transition rounded-xl px-3 py-2 hover:bg-blue-50/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onClick={() => handleNav(link.id)}
+                onClick={() => handleNav(link)}
               >
                 {link.label}
               </button>
@@ -89,10 +96,10 @@ export default function Navbar() {
       <div className={`${open ? "block" : "hidden"} md:hidden bg-white/95 shadow-lg backdrop-blur absolute w-full left-0 mt-2 py-2 rounded-b-2xl`}>
         <ul className="flex flex-col gap-4 py-2 px-6">
           {navLinks.map((link) => (
-            <li key={link.id}>
+            <li key={link.label}>
               <button
                 className="w-full text-left text-blue-700 font-semibold py-2 px-2 rounded-xl hover:bg-blue-50/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onClick={() => handleNav(link.id)}
+                onClick={() => handleNav(link)}
               >
                 {link.label}
               </button>
@@ -103,4 +110,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
