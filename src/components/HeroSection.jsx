@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import FairyAnimation from "./FairyAnimation"; // import this at the top
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroSection() {
   const heroRef = useRef();
+  const [showFairy, setShowFairy] = useState(false);
 
   useEffect(() => {
     gsap.fromTo(
@@ -25,6 +27,21 @@ export default function HeroSection() {
     );
   }, []);
 
+  // Handler for Get Started button
+  const handleGetStarted = () => {
+    setShowFairy(true);
+  };
+
+  // Handler when fairy animation completes
+  const handleFairyFinish = () => {
+    setShowFairy(false);
+    // Smooth scroll to CTA section
+    const cta = document.getElementById("cta-section");
+    if (cta) {
+      cta.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section
       id="hero-section"
@@ -41,15 +58,11 @@ export default function HeroSection() {
         </p>
         <button
           className="px-7 py-3 sm:px-8 sm:py-4 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-blue-100 transition text-lg md:text-xl"
-          onClick={() => {
-            const cta = document.getElementById("cta-section");
-            if (cta) {
-              cta.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
+          onClick={handleGetStarted}
         >
           Get Started
         </button>
+        {showFairy && <FairyAnimation onFinish={handleFairyFinish} />}
       </div>
     </section>
   );
