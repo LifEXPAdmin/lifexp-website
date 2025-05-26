@@ -1,26 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 
-const NUM_SPARKLES = 10;
-const SPARKLE_INTERVAL = 250; // ms between sparkles (adjust for more/less)
-const FLY_TIME = 2.8; // seconds for fairy animation
-
-// Generate random sparkle attributes
-function randomSparkleProps() {
-  return {
-    dx: Math.random() * 20 - 10,
-    dy: Math.random() * 10 - 5,
-    rotate: Math.random() * 120 - 60,
-    scale: 0.7 + Math.random() * 0.8,
-    duration: 0.85 + Math.random() * 0.45
-  };
-}
-
+// For a true emitter, we’ll track the fairy’s current position:
 export default function FairyAnimation({ onFinish }) {
-  const [sparkles, setSparkles] = useState([]);
   const audioRef = useRef();
+  const [sparkles, setSparkles] = useState([]);
+  const fairyX = useMotionValue(-60);
+  const fairyY = useMotionValue(60);
+
+  // Fairy flies off the right edge
   const flyLength = typeof window !== "undefined" ? window.innerWidth + 100 : 900;
-  const fairyPath = [ -60, 120, 280, 410, 580, flyLength ];
+  const DURATION = 2.6; // total fairy animation duration in seconds
 
   useEffect(() => {
     // Play sound
@@ -29,40 +19,55 @@ export default function FairyAnimation({ onFinish }) {
       audioRef.current.volume = 0.7;
       audioRef.current.play();
     }
-    // Sparkle emission
-    let sparkleIdx = 0;
-    let running = true;
-    function emitSparkle() {
-      if (!running || sparkleIdx >= NUM_SPARKLES) return;
-      const progress = sparkleIdx / NUM_SPARKLES;
-      // Fairy's position along the X path at this progress
-      const x =
-        fairyPath[0] +
-        (fairyPath[fairyPath.length - 1] - fairyPath[0]) * progress;
-      setSparkles((sp) => [
-        ...sp,
-        { id: Math.random(), x, ...randomSparkleProps() }
-      ]);
-      sparkleIdx += 1;
-      setTimeout(emitSparkle, SPARKLE_INTERVAL);
-    }
-    emitSparkle();
-    return () => {
-      running = false;
-    };
   }, []);
 
-  // Remove sparkles after they're done
-  useEffect(() => {
-    if (sparkles.length > 0) {
-      const cleanup = setTimeout(() => setSparkles([]), 1800);
-      return () => clearTimeout(cleanup);
+  // Emit dust sparkles as the fairy moves
+  useAnimationFrame((t) => {
+    // t is ms since component mount
+    const progress = Math.min(t / (DURATION * 1000), 1);
+    const pathX = -60 + (flyLength + 60) * progress;
+    // This y path matches your "bee line"
+    const yPath =
+      60 +
+      50 * Math.sin(progress * Math.PI * 1.5) -
+      15 * Math.sin(progress * Math.PI * 3);
+    fairyX.set(pathX);
+    fairyY.set(yPath);
+
+    // Emit a new sparkle every ~25ms (very fine dust trail)
+    if (Math.random() < 0.35) {
+      setSparkles((prev) => [
+        ...prev,
+        {
+          id: Math.random() + "" + t,
+          x: pathX - 6,
+          y: yPath + 7,
+          angle: Math.random() * 90 - 45,
+          drift: Math.random() * 24 - 12,
+          size: 2 + Math.random() * 2.2,
+          opacity: 0.55 + Math.random() * 0.35,
+          lifetime: 0, // will be updated
+        },
+      ]);
     }
-  }, [sparkles]);
+  });
+
+  // Animate and remove old sparkles
+  useEffect(() => {
+    if (sparkles.length === 0) return;
+    const anim = setInterval(() => {
+      setSparkles((prev) =>
+        prev
+          .map((sp) => ({ ...sp, lifetime: sp.lifetime + 60 }))
+          .filter((sp) => sp.lifetime < 620) // 620ms = fade out time
+      );
+    }, 60);
+    return () => clearInterval(anim);
+  }, [sparkles.length]);
 
   return (
     <>
-      <motion.svg
+      <svg
         width={flyLength}
         height="160"
         style={{
@@ -70,60 +75,43 @@ export default function FairyAnimation({ onFinish }) {
           left: 0,
           top: 90,
           zIndex: 9999,
-          pointerEvents: "none"
+          pointerEvents: "none",
         }}
       >
-        {/* Sparkles */}
-        {sparkles.map((sp, i) => (
-          <motion.g
+        {/* Particle fairy dust */}
+        {sparkles.map((sp) => (
+          <circle
             key={sp.id}
-            initial={{
-              opacity: 0.85,
-              x: sp.x,
-              y: 45 + sp.dy,
-              scale: sp.scale,
-              rotate: sp.rotate
+            cx={sp.x + sp.lifetime * sp.drift * 0.0025}
+            cy={sp.y + sp.lifetime * 0.06 + Math.sin(sp.lifetime / 100 + sp.angle) * 2.5}
+            r={sp.size * (1 - sp.lifetime / 600)}
+            fill="#fffbe7"
+            opacity={sp.opacity * (1 - sp.lifetime / 600)}
+            style={{
+              filter:
+                "drop-shadow(0 0 2px #fffbe7) drop-shadow(0 0 8px #b3e5fc60)",
             }}
-            animate={{
-              opacity: 0,
-              y: 45 + sp.dy + 35 + Math.random() * 10,
-              scale: sp.scale * 1.45
-            }}
-            transition={{
-              duration: sp.duration,
-              ease: "easeOut"
-            }}
-          >
-            {/* Star-shaped sparkle */}
-            <polygon
-              points="8,0 10,6 16,6.5 11.5,10.5 13,17 8,13.5 3,17 4.5,10.5 0,6.5 6,6"
-              fill="#fffde7"
-              opacity="0.85"
-              style={{ filter: "drop-shadow(0 0 4px #fffbe7)" }}
-            />
-            <polygon
-              points="8,3 9,7 13,7.3 10,9.5 11,13 8,11 5,13 6,9.5 3,7.3 7,7"
-              fill="#b3e5fc"
-              opacity="0.65"
-            />
-          </motion.g>
+          />
         ))}
         {/* Fairy */}
         <motion.g
           initial={{ opacity: 1 }}
           animate={{ opacity: [1, 1, 1, 0] }}
-          transition={{ duration: FLY_TIME + 0.5, times: [0, 0.85, 0.97, 1] }}
+          transition={{ duration: DURATION + 0.45, times: [0, 0.85, 0.98, 1] }}
         >
           <motion.g
-            initial={{ x: -60, y: 60 }}
+            style={{
+              x: fairyX,
+              y: fairyY,
+            }}
             animate={{
-              x: fairyPath,
-              y: [60, 30, 0, 35, 20, 40]
+              x: flyLength + 60,
+              y: 40,
             }}
             transition={{
-              duration: FLY_TIME,
+              duration: DURATION,
               ease: "easeInOut",
-              onComplete: onFinish
+              onComplete: onFinish,
             }}
           >
             {/* Fairy SVG */}
@@ -141,7 +129,7 @@ export default function FairyAnimation({ onFinish }) {
             </svg>
           </motion.g>
         </motion.g>
-      </motion.svg>
+      </svg>
       <audio ref={audioRef} src="/fairy-chime.mp3" preload="auto" />
     </>
   );
