@@ -18,7 +18,7 @@ export default function AppDemoSection() {
       <div className="flex-1 flex items-center justify-center w-full">
         <div className="shadow-2xl rounded-[2.3rem] border-4 border-white/70 overflow-hidden bg-white/70 max-w-[320px] w-full aspect-[9/19.5] flex items-center justify-center">
           <img
-            src="/screenshots/lifexp-home-screenshot.png"
+            src="public/screenshots/lifexp-home-screenshot.png"
             alt="LifEXP Home Screen"
             className="object-contain w-full h-full"
             draggable="false"
