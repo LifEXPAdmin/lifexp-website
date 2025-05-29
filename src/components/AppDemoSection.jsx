@@ -18,9 +18,10 @@ export default function AppDemoSection() {
       <div className="flex-1 flex items-center justify-center w-full">
         <div className="shadow-2xl rounded-3xl border-4 border-white/70 overflow-hidden bg-white/70 max-w-[320px] w-full">
           <img
-            src="https://placehold.co/320x640?text=Your+App+Screenshot"
+            src="/screenshots/lifexp-home-screenshot.png"
             alt="LifEXP App Demo"
             className="object-cover w-full h-full"
+            draggable="false"
           />
         </div>
       </div>
