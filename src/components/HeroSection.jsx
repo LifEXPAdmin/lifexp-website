@@ -11,8 +11,7 @@ export default function HeroSection() {
     const feature = document.getElementById("feature-section");
     if (feature) {
       const rect = feature.getBoundingClientRect();
-      // 80px offset (adjust if your header is taller/shorter)
-      const y = window.scrollY + rect.top - 65; 
+      const y = window.scrollY + rect.top - 50; 
       window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
