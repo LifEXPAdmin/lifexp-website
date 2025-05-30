@@ -13,6 +13,8 @@ import PrivacyPage from "./components/PrivacyPage";
 import TestimonialSection from "./components/TestimonialSection";
 import UpdatesPage from "./components/UpdatesPage";
 import ContactPage from "./components/ContactPage";
+import ScrollToTop from "./components/ScrollToTop";
+import RetrainSection from "./components/RetrainSection";
 
 
 function MainContent() {
@@ -21,6 +23,7 @@ function MainContent() {
       <div className="pt-20">
         <HeroSection />
         <FeatureSection />
+        <RetrainSection />
         <AppDemoSection />
         <ExperienceSection />
         <TestimonialSection />
@@ -52,6 +55,7 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Navbar />
       <AnimatedRoutes />
     </Router>
