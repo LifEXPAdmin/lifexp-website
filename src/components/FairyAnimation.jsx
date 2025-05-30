@@ -77,12 +77,12 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
       <ellipse cx="21.5" cy="27.5" rx="3" ry="6" fill="#f8b45c" transform="rotate(-18 21.5 27.5)" />
       {/* Face */}
       <ellipse cx="32" cy="27" rx="6" ry="4.2" fill="#f3a14b" />
-      {/* Eyes (NEW) */}
+      {/* Eyes */}
       <ellipse cx="29.3" cy="26" rx="1" ry="1.4" fill="#593c28" />
       <ellipse cx="34.7" cy="26" rx="1" ry="1.4" fill="#593c28" />
-      {/* Smile (NEW) */}
+      {/* Smile */}
       <path d="M30.8 28.4 Q32 29.7 33.2 28.4" stroke="#6c4425" strokeWidth="1" fill="none" />
-      {/* Nose (NEW) */}
+      {/* Nose */}
       <ellipse cx="32" cy="27.7" rx="0.45" ry="0.8" fill="#dd9c55" />
       {/* Hair (orange, covers ears, curved) */}
       <path
@@ -181,20 +181,24 @@ export default function FairyAnimation({ onFinish }) {
     fairyY.set(yPath);
 
     // Emit sparkles (trailing behind fairy)
-    if (Math.random() < 0.4) {
-      setSparkles((prev) => [
-        ...prev,
-        {
-          id: Math.random() + "" + t,
-          x: pathX - 8,
-          y: yPath + 9,
-          angle: Math.random() * 90 - 45,
-          drift: Math.random() * 24 - 12,
-          size: 2 + Math.random() * 1.5,
-          opacity: 0.45 + Math.random() * 0.55,
-          lifetime: 0,
-        },
-      ]);
+    for (let i = 0; i < 3; i++) {
+      if (Math.random() < 0.7) {
+        setSparkles((prev) => [
+          ...prev,
+          {
+            id: Math.random() + "" + t + i,
+            x: pathX - 8 + Math.random() * 2,
+            y: yPath + 9 + Math.random() * 2,
+            angle: Math.random() * 90 - 45,
+            drift: Math.random() * 24 - 12,
+            size: 0.7 + Math.random() * 1.0,
+            opacity: 0.3 + Math.random() * 0.7,
+            isStar: false, // Set to true for some sparkles to be stars
+            color: ["#fffbe7", "#e6f7ff", "#ffe082", "#b3e5fc"][Math.floor(Math.random() * 4)],
+            lifetime: 0,
+          },
+        ]);
+      }
     }
   });
 
@@ -215,33 +219,28 @@ export default function FairyAnimation({ onFinish }) {
     <>
       <svg
         width={flyLength}
-        height="300" // <-- Increased height
+        height="300"
         style={{
           position: "fixed",
           left: 0,
-          top: 40, // <-- Lowered top for more space
+          top: 40,
           zIndex: 9999,
           pointerEvents: "none",
         }}
       >
         {/* Fairy Dust Sparkles */}
         {sparkles.map((sp) => (
-          <g key={sp.id}>
-            <motion.polygon
-              points="2,0 4,4 0,3 4,3 0,4"
-              fill="#fffbe7"
-              opacity={sp.opacity * (1 - sp.lifetime / 700)}
-              style={{
-                transform: `translate(${sp.x + sp.lifetime * sp.drift * 0.0025}px,${sp.y +
-                  sp.lifetime * 0.09 +
-                  Math.sin(sp.lifetime / 60 + sp.angle) *
-                    2.5}px) scale(${sp.size * (1 - sp.lifetime / 700) * 0.6}) rotate(${
-                  sp.angle + sp.lifetime * 0.1
-                }deg)`,
-                filter: "drop-shadow(0 0 3px #fffbe7) drop-shadow(0 0 10px #b3e5fc80)",
-              }}
-            />
-          </g>
+          <motion.circle
+            key={sp.id}
+            cx={sp.x + sp.lifetime * sp.drift * 0.0025}
+            cy={sp.y + sp.lifetime * 0.09 + Math.sin(sp.lifetime / 60 + sp.angle) * 2.5}
+            r={sp.size * (1 - sp.lifetime / 700)}
+            fill={sp.color}
+            opacity={sp.opacity * (1 - sp.lifetime / 700)}
+            style={{
+              filter: "drop-shadow(0 0 2px #fffbe7) drop-shadow(0 0 8px #b3e5fc80)",
+            }}
+          />
         ))}
         {/* Fairy Group */}
         <motion.g
