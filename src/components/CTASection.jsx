@@ -26,32 +26,36 @@ export default function CTASection() {
           Join LifEXP and start your real-life adventure today. Get early access, unlock questlines, and become part of something bigger!
         </p>
         {submitted ? (
-          <div className="bg-white bg-opacity-90 rounded-xl p-8 shadow-xl text-center w-full max-w-md mx-auto">
-            <p className="text-2xl font-bold text-blue-700 mb-2">Thank you!</p>
-            <p className="text-blue-700">You’re on the waitlist. We’ll email you soon.</p>
-          </div>
-        ) : (
-          <form
-            action="https://formspree.io/f/xkgr1zdz"
-            method="POST"
-            className="flex flex-col md:flex-row items-center gap-4 w-full max-w-md mx-auto mb-4"
-            onSubmit={() => setSubmitted(true)}
-          >
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              className="flex-1 px-5 py-3 rounded-full border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-              required
-            />
-            <button
-              type="submit"
-              className="px-8 py-3 bg-white text-blue-700 text-lg md:text-xl font-bold rounded-full shadow-lg hover:bg-blue-100 transition"
-            >
-              Join the Waitlist
-            </button>
-          </form>
-        )}
+  <div className="bg-white bg-opacity-90 rounded-xl p-8 shadow-xl text-center w-full max-w-md mx-auto">
+    <p className="text-2xl font-bold text-blue-700 mb-2">Thank you!</p>
+    <p className="text-blue-700">You’re on the waitlist. We’ll email you soon.</p>
+  </div>
+) : (
+  <form
+    action="https://formspree.io/f/xkgr1zdz"
+    method="POST"
+    className="flex flex-col md:flex-row items-center gap-4 w-full max-w-md mx-auto mb-4"
+    onSubmit={(e) => {
+      // Don't prevent default! Let browser submit the form.
+      setTimeout(() => setSubmitted(true), 300);
+    }}
+  >
+    <input
+      type="email"
+      name="email"
+      placeholder="Enter your email"
+      className="flex-1 px-5 py-3 rounded-full border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
+      required
+    />
+    <button
+      type="submit"
+      className="px-8 py-3 bg-white text-blue-700 text-lg md:text-xl font-bold rounded-full shadow-lg hover:bg-blue-100 transition"
+    >
+      Join the Waitlist
+    </button>
+  </form>
+)}
+
         <span className="text-blue-900 text-sm opacity-80 block text-center">
           No spam. Cancel anytime.
         </span>
