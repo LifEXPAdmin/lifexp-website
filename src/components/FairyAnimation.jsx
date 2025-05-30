@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 
-// Custom Fairy SVG as close as possible to your reference, now WITH FACE
+// --- Fairy SVG (as you provided, full and unchanged) ---
 function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
   return (
     <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
@@ -131,9 +131,10 @@ function FairySVG({ wingFlap = 0, wandGlow = 1 }) {
   );
 }
 
+// --- Fairy Animation ---
 export default function FairyAnimation({ onFinish }) {
   const audioRef = useRef();
-  const [sparkles, setSparkles] = useState([]);
+  const [particles, setParticles] = useState([]);
   const fairyX = useMotionValue(-60);
   const fairyY = useMotionValue(60);
   const [wingFlap, setWingFlap] = useState(0);
@@ -141,7 +142,7 @@ export default function FairyAnimation({ onFinish }) {
 
   // Animation settings
   const flyLength = typeof window !== "undefined" ? window.innerWidth + 100 : 900;
-  const DURATION = 2.6; // seconds
+  const DURATION = 2.6;
 
   // Wing and wand animation
   useEffect(() => {
@@ -168,52 +169,53 @@ export default function FairyAnimation({ onFinish }) {
     }
   }, []);
 
-  // Fairy flight path
+  // Fairy flight path and fairy dust
   useAnimationFrame((t) => {
     const progress = Math.min(t / (DURATION * 1000), 1);
     const pathX = -60 + (flyLength + 60) * progress;
-    // Bee-line curve
     const yPath =
       60 +
       50 * Math.sin(progress * Math.PI * 1.5) -
       15 * Math.sin(progress * Math.PI * 3);
+
     fairyX.set(pathX);
     fairyY.set(yPath);
 
-    // Emit sparkles (trailing behind fairy)
+    // Fairy Dust - emit more, smaller magical particles
+    let newParticles = [];
     for (let i = 0; i < 3; i++) {
-      if (Math.random() < 0.7) {
-        setSparkles((prev) => [
-          ...prev,
-          {
-            id: Math.random() + "" + t + i,
-            x: pathX - 8 + Math.random() * 2,
-            y: yPath + 9 + Math.random() * 2,
-            angle: Math.random() * 90 - 45,
-            drift: Math.random() * 24 - 12,
-            size: 0.7 + Math.random() * 1.0,
-            opacity: 0.3 + Math.random() * 0.7,
-            isStar: false, // Set to true for some sparkles to be stars
-            color: ["#fffbe7", "#e6f7ff", "#ffe082", "#b3e5fc"][Math.floor(Math.random() * 4)],
-            lifetime: 0,
-          },
-        ]);
-      }
+      const kind = Math.random() < 0.17 ? "star" : "dot"; // Mostly dots, some stars
+      const color = [
+        "#fffbe7", "#e6f7ff", "#ffe082", "#b3e5fc", "#d1c4e9", "#f8bbd0"
+      ][Math.floor(Math.random() * 6)];
+      newParticles.push({
+        id: Math.random() + "_" + t + "_" + i,
+        x: pathX - 8 + Math.random() * 4,
+        y: yPath + 14 + Math.random() * 8,
+        drift: Math.random() * 20 - 10,
+        size: kind === "star" ? 2.2 + Math.random() * 1.4 : 1 + Math.random() * 1.1,
+        opacity: 0.48 + Math.random() * 0.52,
+        color,
+        lifetime: 0,
+        kind,
+        spin: Math.random() * 180,
+      });
     }
+    setParticles((prev) => [...prev, ...newParticles]);
   });
 
-  // Sparkle animation
+  // Particle animation & cleanup
   useEffect(() => {
-    if (sparkles.length === 0) return;
+    if (particles.length === 0) return;
     const anim = setInterval(() => {
-      setSparkles((prev) =>
+      setParticles((prev) =>
         prev
-          .map((sp) => ({ ...sp, lifetime: sp.lifetime + 60 }))
+          .map((sp) => ({ ...sp, lifetime: sp.lifetime + 40 }))
           .filter((sp) => sp.lifetime < 720)
       );
-    }, 60);
+    }, 40);
     return () => clearInterval(anim);
-  }, [sparkles.length]);
+  }, [particles.length]);
 
   return (
     <>
@@ -228,20 +230,35 @@ export default function FairyAnimation({ onFinish }) {
           pointerEvents: "none",
         }}
       >
-        {/* Fairy Dust Sparkles */}
-        {sparkles.map((sp) => (
-          <motion.circle
-            key={sp.id}
-            cx={sp.x + sp.lifetime * sp.drift * 0.0025}
-            cy={sp.y + sp.lifetime * 0.09 + Math.sin(sp.lifetime / 60 + sp.angle) * 2.5}
-            r={sp.size * (1 - sp.lifetime / 700)}
-            fill={sp.color}
-            opacity={sp.opacity * (1 - sp.lifetime / 700)}
-            style={{
-              filter: "drop-shadow(0 0 2px #fffbe7) drop-shadow(0 0 8px #b3e5fc80)",
-            }}
-          />
-        ))}
+        {/* Fairy Dust Particles */}
+        {particles.map((sp) =>
+          sp.kind === "star" ? (
+            <motion.polygon
+              key={sp.id}
+              points="2,0 2.6,1.6 4,2 2.6,2.4 2,4 1.4,2.4 0,2 1.4,1.6"
+              fill={sp.color}
+              opacity={sp.opacity * (1 - sp.lifetime / 700)}
+              style={{
+                transform: `translate(${sp.x + sp.lifetime * sp.drift * 0.0025}px,${sp.y +
+                  sp.lifetime * 0.09}px) scale(${sp.size * (1 - sp.lifetime / 700) * 0.6}) rotate(${sp.spin +
+                  sp.lifetime * 0.24}deg)`,
+                filter: "drop-shadow(0 0 6px #fffbe7) drop-shadow(0 0 12px #b3e5fc80)",
+              }}
+            />
+          ) : (
+            <motion.circle
+              key={sp.id}
+              cx={sp.x + sp.lifetime * sp.drift * 0.0025}
+              cy={sp.y + sp.lifetime * 0.09}
+              r={sp.size * (1 - sp.lifetime / 700)}
+              fill={sp.color}
+              opacity={sp.opacity * (1 - sp.lifetime / 700)}
+              style={{
+                filter: "drop-shadow(0 0 4px #fffbe7) drop-shadow(0 0 8px #b3e5fc80)",
+              }}
+            />
+          )
+        )}
         {/* Fairy Group */}
         <motion.g
           initial={{ opacity: 1 }}
