@@ -215,11 +215,11 @@ export default function FairyAnimation({ onFinish }) {
     <>
       <svg
         width={flyLength}
-        height="160"
+        height="300" // <-- Increased height
         style={{
           position: "fixed",
           left: 0,
-          top: 90,
+          top: 40, // <-- Lowered top for more space
           zIndex: 9999,
           pointerEvents: "none",
         }}
