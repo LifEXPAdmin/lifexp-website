@@ -7,12 +7,16 @@ export default function HeroSection() {
   // Called after the fairy finishes flying
   const handleFairyFinish = () => {
     setShowFairy(false);
-    // Scroll to the feature section smoothly
+    // Smooth scroll to feature section, but offset by 80px from the top
     const feature = document.getElementById("feature-section");
     if (feature) {
-      feature.scrollIntoView({ behavior: "smooth" });
+      const rect = feature.getBoundingClientRect();
+      // 80px offset (adjust if your header is taller/shorter)
+      const y = window.scrollY + rect.top - 80; 
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
+  
 
   return (
     <section
