@@ -65,6 +65,7 @@ export default function CTASection() {
   const [mainGoal, setMainGoal] = useState("");
   const [mainGoalOther, setMainGoalOther] = useState("");
   const [platform, setPlatform] = useState("");
+  const [platformOther, setPlatformOther] = useState("");
   const [howHeard, setHowHeard] = useState("");
   const [howHeardOther, setHowHeardOther] = useState("");
   const [interests, setInterests] = useState([]);
@@ -112,7 +113,9 @@ export default function CTASection() {
     message += `Main Goal with LifEXP: ${
       mainGoal === "Other" ? mainGoalOther : mainGoal
     }\n`;
-    message += `Preferred Platform/Device: ${platform}\n`;
+    message += `Preferred Platform/Device: ${
+      platform === "Other" ? platformOther : platform
+    }\n`;
     message += `How did you hear about us?: ${
       howHeard === "Other" ? howHeardOther : howHeard
     }\n`;
@@ -152,6 +155,7 @@ export default function CTASection() {
         setMainGoal("");
         setMainGoalOther("");
         setPlatform("");
+        setPlatformOther("");
         setHowHeard("");
         setHowHeardOther("");
         setInterests([]);
@@ -231,11 +235,11 @@ export default function CTASection() {
           Waitlist Application
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <input
               type="text"
               placeholder="First Name"
-              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="flex-[2] min-w-[120px] px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -244,23 +248,23 @@ export default function CTASection() {
               type="text"
               maxLength={1}
               placeholder="Last Initial"
-              className="w-20 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="flex-1 min-w-[80px] max-w-[90px] px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={lastInitial}
               onChange={(e) => setLastInitial(e.target.value.toUpperCase())}
               required
             />
-          </div>
-          <div className="flex gap-4">
             <input
               type="number"
               placeholder="Age"
               min="10"
               max="99"
-              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="flex-1 min-w-[80px] max-w-[100px] px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={age}
               onChange={(e) => setAge(e.target.value)}
               required
             />
+          </div>
+          <div className="flex gap-4 mt-2">
             <input
               type="text"
               placeholder="Country"
