@@ -1,62 +1,62 @@
 import React, { useState } from "react";
 
-// Dropdown options
 const OCCUPATIONS = [
   "Student",
-  "Professional",
-  "Job Seeker",
-  "Career Changer",
-  "Homemaker",
-  "Entrepreneur",
+  "Software/IT",
+  "Healthcare",
+  "Education",
+  "Skilled Trades",
+  "Business/Finance",
+  "Arts/Design",
+  "Retail/Hospitality",
+  "Full-time Parent",
+  "Unemployed/Job-Seeking",
   "Retired",
-  "Other"
+  "Other",
 ];
 
 const MAIN_GOALS = [
-  "Build daily habits",
-  "Career change/retraining",
-  "Level up my life",
   "Make new friends/community",
-  "Track skill progress",
-  "Boost motivation",
-  "Other"
+  "Land a new job",
+  "Career change",
+  "Self-improvement",
+  "Track habits/goals",
+  "Level up IRL skills",
+  "Get motivated",
+  "Have fun/gamify life",
+  "Other",
 ];
 
 const PLATFORMS = [
   "iOS (iPhone/iPad)",
   "Android",
-  "Web/Desktop",
-  "Other"
+  "Mac",
+  "Windows PC",
+  "Web browser",
+  "Other",
 ];
 
-const HOW_HEARD = [
-  "Instagram",
-  "TikTok",
-  "YouTube",
-  "X/Twitter",
-  "Facebook",
+const HOW_HEARD_OPTIONS = [
   "Friend/Word of Mouth",
-  "Online Article/Blog",
-  "YC/Startup Community",
-  "Other"
-];
-
-const INTERESTED_IN = [
-  "Beta testing and giving feedback",
-  "Early access to new features",
-  "Joining the community Discord/Slack",
-  "Becoming a LifEXP ambassador",
-  "None of these"
+  "Creator",
+  "Social Media (Instagram/TikTok/X/Facebook)",
+  "YouTube",
+  "Web search/Google",
+  "Podcast",
+  "Article/Blog",
+  "Other",
 ];
 
 export default function CTASection() {
-  // Step 1: Email entry, Step 2: Survey, Step 3: Success
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Form values
+  // Form fields
   const [email, setEmail] = useState("");
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastInitial, setLastInitial] = useState("");
   const [age, setAge] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
@@ -65,87 +65,98 @@ export default function CTASection() {
   const [mainGoal, setMainGoal] = useState("");
   const [mainGoalOther, setMainGoalOther] = useState("");
   const [platform, setPlatform] = useState("");
-  const [platformOther, setPlatformOther] = useState("");
-  const [heard, setHeard] = useState("");
-  const [heardOther, setHeardOther] = useState("");
-  const [interested, setInterested] = useState([]);
-  const [interestText, setInterestText] = useState("");
-  const [extra, setExtra] = useState("");
+  const [howHeard, setHowHeard] = useState("");
+  const [howHeardOther, setHowHeardOther] = useState("");
+  const [interests, setInterests] = useState([]);
+  const [about, setAbout] = useState("");
+  const [share, setShare] = useState("");
 
-  // Error & loading
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const INTEREST_OPTIONS = [
+    "Beta testing and giving feedback",
+    "Early access to new features",
+    "Joining the community Discord/Slack",
+    "Becoming a LifEXP ambassador",
+    "None of these",
+  ];
 
-  // Handle multi-select for "Would you be interested..."
-  function handleInterestedChange(opt) {
-    setInterested(prev =>
-      prev.includes(opt)
-        ? prev.filter(i => i !== opt)
-        : [...prev, opt]
-    );
+  // Checkbox handler
+  function handleInterestChange(option) {
+    if (option === "None of these") {
+      setInterests(["None of these"]);
+    } else if (interests.includes("None of these")) {
+      setInterests([option]);
+    } else if (interests.includes(option)) {
+      setInterests(interests.filter((x) => x !== option));
+    } else {
+      setInterests([...interests, option]);
+    }
   }
 
-  // Show "Other" input logic
-  const showOccupationOther = occupation === "Other";
-  const showGoalOther = mainGoal === "Other";
-  const showPlatformOther = platform === "Other";
-  const showHeardOther = heard === "Other";
-
-  // On submit: bundle data into one "message" field
-  async function handleSubmit(e) {
+  // Final submission handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Compose email body
-    const message = `
-Waitlist Application
+    // Compose message for email
+    let message = `Waitlist Application\n\n`;
+    message += `First Name: ${firstName}\n`;
+    message += `Last Initial: ${lastInitial}\n`;
+    message += `Email: ${email}\n`;
+    message += `Age: ${age}\n`;
+    message += `Country: ${country}\n`;
+    message += `City: ${city}\n`;
+    message += `Occupation/Background: ${
+      occupation === "Other" ? occupationOther : occupation
+    }\n`;
+    message += `Main Goal with LifEXP: ${
+      mainGoal === "Other" ? mainGoalOther : mainGoal
+    }\n`;
+    message += `Preferred Platform/Device: ${platform}\n`;
+    message += `How did you hear about us?: ${
+      howHeard === "Other" ? howHeardOther : howHeard
+    }\n`;
+    message += `Would you be interested in:\n`;
+    if (interests.length > 0) {
+      interests.forEach((item) => {
+        message += `- ${item}\n`;
+      });
+    }
+    message += `What interests you about LifEXP?: ${about}\n`;
+    message += `Anything else you'd like to share?: ${share}\n`;
 
-First Name: ${first}
-Last Initial: ${last}
-Email: ${email}
-Age: ${age}
-Country: ${country}
-City: ${city}
-Occupation/Background: ${showOccupationOther ? occupationOther : occupation}
-Main Goal: ${showGoalOther ? mainGoalOther : mainGoal}
-Preferred Platform: ${showPlatformOther ? platformOther : platform}
-How did you hear about us?: ${showHeardOther ? heardOther : heard}
-Interested in: ${interested.length ? interested.join(", ") : ""}
-What interests you about LifEXP?: ${interestText}
-Anything else you'd like to share?: ${extra}
-    `.trim();
+    // Use FormData (REQUIRED for Formspree!)
+    let formData = new FormData();
+    formData.append("email", email);
+    formData.append("message", message);
 
-    // POST to Formspree
     try {
       const res = await fetch("https://formspree.io/f/mwpbeayy", {
         method: "POST",
         headers: { Accept: "application/json" },
-        body: new FormData(
-          Object.assign(document.createElement("form"), {
-            elements: [
-              { name: "email", value: email },
-              { name: "message", value: message }
-            ]
-          })
-        ),
+        body: formData,
       });
-
-      // Fallback for browsers (FormData above is a little hacky)
-      // Alternative safer way:
-      // let formData = new FormData();
-      // formData.append("email", email);
-      // formData.append("message", message);
-
-      // const res = await fetch("https://formspree.io/f/mwpbeayy", {
-      //   method: "POST",
-      //   headers: { Accept: "application/json" },
-      //   body: formData,
-      // });
 
       const result = await res.json();
       if (result.ok) {
-        setStep(3);
+        setSubmitted(true);
+        setStep(0);
+        setEmail("");
+        setFirstName("");
+        setLastInitial("");
+        setAge("");
+        setCountry("");
+        setCity("");
+        setOccupation("");
+        setOccupationOther("");
+        setMainGoal("");
+        setMainGoalOther("");
+        setPlatform("");
+        setHowHeard("");
+        setHowHeardOther("");
+        setInterests([]);
+        setAbout("");
+        setShare("");
       } else {
         setError("Sorry, there was a problem. Please try again.");
       }
@@ -153,24 +164,16 @@ Anything else you'd like to share?: ${extra}
       setError("Sorry, there was a problem. Please try again.");
     }
     setLoading(false);
-  }
+  };
 
-  // Step 1: Just email input
-  if (step === 1)
+  // Step 1: Email only
+  if (step === 0)
     return (
       <section
         id="cta-section"
         className="relative flex flex-col items-center justify-center min-h-[45vh] bg-gradient-to-b from-purple-700 via-blue-500 to-purple-700 py-12 px-3"
         style={{ backdropFilter: "blur(2px)" }}
       >
-        <div
-          className="absolute top-0 left-0 w-full h-16 pointer-events-none z-10"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(76,29,149,0), rgba(76,29,149,0.95) 90%)",
-          }}
-        />
-
         <div className="w-full max-w-lg bg-white/30 rounded-3xl shadow-2xl px-4 sm:px-10 py-10 md:py-14 border border-white/40 backdrop-blur-md relative z-20">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-700 mb-6 text-center drop-shadow">
             Ready to Level Up Your Life?
@@ -178,30 +181,37 @@ Anything else you'd like to share?: ${extra}
           <p className="text-base sm:text-lg md:text-xl text-blue-900 mb-8 max-w-xl text-center">
             Join LifEXP and start your real-life adventure today. Get early access, unlock questlines, and become part of something bigger!
           </p>
-          <form
-            className="flex flex-col md:flex-row items-center gap-4 w-full max-w-md mx-auto mb-4"
-            onSubmit={e => {
-              e.preventDefault();
-              if (!email) return;
-              setStep(2);
-            }}
-          >
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              className="flex-1 px-5 py-3 rounded-full border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-              required
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="px-8 py-3 bg-white text-blue-700 text-lg md:text-xl font-bold rounded-full shadow-lg hover:bg-blue-100 transition"
+          {submitted ? (
+            <div className="bg-white bg-opacity-90 rounded-xl p-8 shadow-xl text-center w-full max-w-md mx-auto">
+              <p className="text-2xl font-bold text-blue-700 mb-2">Thank you!</p>
+              <p className="text-blue-700">Your application is received. We'll email you soon.</p>
+            </div>
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setStep(1);
+              }}
+              className="flex flex-col md:flex-row items-center gap-4 w-full max-w-md mx-auto mb-4"
             >
-              Join the Waitlist
-            </button>
-          </form>
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="flex-1 px-5 py-3 rounded-full border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
+                required
+                autoComplete="email"
+              />
+              <button
+                type="submit"
+                className="px-8 py-3 bg-white text-blue-700 text-lg md:text-xl font-bold rounded-full shadow-lg hover:bg-blue-100 transition"
+              >
+                Join the Waitlist
+              </button>
+            </form>
+          )}
           <span className="text-blue-900 text-sm opacity-80 block text-center">
             No spam. Cancel anytime.
           </span>
@@ -209,257 +219,214 @@ Anything else you'd like to share?: ${extra}
       </section>
     );
 
-  // Step 3: Thank you
-  if (step === 3)
-    return (
-      <section
-        id="cta-section"
-        className="relative flex flex-col items-center justify-center min-h-[45vh] bg-gradient-to-b from-purple-700 via-blue-500 to-purple-700 py-12 px-3"
-        style={{ backdropFilter: "blur(2px)" }}
-      >
-        <div className="w-full max-w-lg bg-white/30 rounded-3xl shadow-2xl px-4 sm:px-10 py-10 md:py-14 border border-white/40 backdrop-blur-md flex flex-col items-center relative z-20">
-          <div className="bg-white bg-opacity-90 rounded-xl p-8 shadow-xl text-center w-full max-w-md mx-auto">
-            <p className="text-2xl font-bold text-blue-700 mb-2">Thank you!</p>
-            <p className="text-blue-700">
-              Your application is received. We’ll email you soon.
-            </p>
-          </div>
-          <span className="text-blue-900 text-sm opacity-80 block text-center mt-4">
-            No spam. Cancel anytime.
-          </span>
-        </div>
-      </section>
-    );
-
-  // Step 2: Survey form
+  // Step 2: Full application
   return (
     <section
       id="cta-section"
-      className="relative flex flex-col items-center justify-center min-h-[45vh] bg-gradient-to-b from-purple-700 via-blue-500 to-purple-700 py-12 px-3"
+      className="relative flex flex-col items-center justify-center min-h-[55vh] bg-gradient-to-b from-purple-700 via-blue-500 to-purple-700 py-12 px-3"
       style={{ backdropFilter: "blur(2px)" }}
     >
-      <div className="w-full max-w-lg bg-white/30 rounded-3xl shadow-2xl px-4 sm:px-10 py-10 md:py-14 border border-white/40 backdrop-blur-md flex flex-col items-center relative z-20">
-        <form
-          className="w-full space-y-5"
-          onSubmit={handleSubmit}
-          autoComplete="off"
-        >
-          <div className="flex gap-3">
+      <div className="w-full max-w-lg bg-white/30 rounded-3xl shadow-2xl px-4 sm:px-10 py-10 md:py-14 border border-white/40 backdrop-blur-md relative z-20">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-700 mb-6 text-center drop-shadow">
+          Waitlist Application
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex gap-4">
             <input
               type="text"
-              className="flex-1 px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               placeholder="First Name"
+              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               required
-              value={first}
-              onChange={e => setFirst(e.target.value)}
             />
             <input
               type="text"
-              maxLength={2}
-              className="w-20 px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
+              maxLength={1}
               placeholder="Last Initial"
+              className="w-20 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              value={lastInitial}
+              onChange={(e) => setLastInitial(e.target.value.toUpperCase())}
               required
-              value={last}
-              onChange={e => setLast(e.target.value)}
             />
+          </div>
+          <div className="flex gap-4">
             <input
               type="number"
-              min={1}
-              max={120}
-              className="w-24 px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               placeholder="Age"
-              required
+              min="10"
+              max="99"
+              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={age}
-              onChange={e => setAge(e.target.value)}
+              onChange={(e) => setAge(e.target.value)}
+              required
             />
-          </div>
-          <div className="flex gap-3">
             <input
               type="text"
-              className="flex-1 px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               placeholder="Country"
-              required
+              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={country}
-              onChange={e => setCountry(e.target.value)}
+              onChange={(e) => setCountry(e.target.value)}
+              required
             />
             <input
               type="text"
-              className="flex-1 px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               placeholder="City"
-              required
+              className="flex-1 px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               value={city}
-              onChange={e => setCity(e.target.value)}
+              onChange={(e) => setCity(e.target.value)}
+              required
             />
           </div>
-          {/* Occupation/Background */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              Occupation/Background
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">Occupation/Background</label>
             <select
-              required
-              className="block w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               value={occupation}
-              onChange={e => setOccupation(e.target.value)}
+              onChange={(e) => setOccupation(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              required
             >
-              <option value="">Select...</option>
-              {OCCUPATIONS.map(opt => (
-                <option value={opt} key={opt}>{opt}</option>
+              <option value="">Choose one...</option>
+              {OCCUPATIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            {showOccupationOther && (
+            {occupation === "Other" && (
               <input
                 type="text"
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-                placeholder="Please specify"
+                placeholder="Your occupation/background"
+                className="mt-2 w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
                 value={occupationOther}
-                onChange={e => setOccupationOther(e.target.value)}
+                onChange={(e) => setOccupationOther(e.target.value)}
                 required
               />
             )}
           </div>
-          {/* Main Goal */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              Main Goal with LifEXP
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">Main Goal with LifEXP</label>
             <select
-              required
-              className="block w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               value={mainGoal}
-              onChange={e => setMainGoal(e.target.value)}
+              onChange={(e) => setMainGoal(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              required
             >
-              <option value="">Select...</option>
-              {MAIN_GOALS.map(opt => (
-                <option value={opt} key={opt}>{opt}</option>
+              <option value="">Choose one...</option>
+              {MAIN_GOALS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            {showGoalOther && (
+            {mainGoal === "Other" && (
               <input
                 type="text"
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-                placeholder="Please specify"
+                placeholder="What's your main goal?"
+                className="mt-2 w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
                 value={mainGoalOther}
-                onChange={e => setMainGoalOther(e.target.value)}
+                onChange={(e) => setMainGoalOther(e.target.value)}
                 required
               />
             )}
           </div>
-          {/* Preferred Platform */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              Preferred Platform/Device
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">Preferred Platform/Device</label>
             <select
-              required
-              className="block w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
               value={platform}
-              onChange={e => setPlatform(e.target.value)}
-            >
-              <option value="">Select...</option>
-              {PLATFORMS.map(opt => (
-                <option value={opt} key={opt}>{opt}</option>
-              ))}
-            </select>
-            {showPlatformOther && (
-              <input
-                type="text"
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-                placeholder="Please specify"
-                value={platformOther}
-                onChange={e => setPlatformOther(e.target.value)}
-                required
-              />
-            )}
-          </div>
-          {/* How did you hear about us */}
-          <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              How did you hear about us?
-            </label>
-            <select
+              onChange={(e) => setPlatform(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
               required
-              className="block w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-              value={heard}
-              onChange={e => setHeard(e.target.value)}
             >
-              <option value="">Select...</option>
-              {HOW_HEARD.map(opt => (
-                <option value={opt} key={opt}>{opt}</option>
+              <option value="">Choose one...</option>
+              {PLATFORMS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            {showHeardOther && (
+            {platform === "Other" && (
               <input
                 type="text"
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-                placeholder="Please specify"
-                value={heardOther}
-                onChange={e => setHeardOther(e.target.value)}
+                placeholder="Your preferred platform"
+                className="mt-2 w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+                value={platformOther}
+                onChange={(e) => setPlatformOther(e.target.value)}
                 required
               />
             )}
           </div>
-          {/* Would you be interested in... */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              Would you be interested in...
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">How did you hear about us?</label>
+            <select
+              value={howHeard}
+              onChange={(e) => setHowHeard(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              required
+            >
+              <option value="">Choose one...</option>
+              {HOW_HEARD_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+            {howHeard === "Other" && (
+              <input
+                type="text"
+                placeholder="How did you hear about LifEXP?"
+                className="mt-2 w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+                value={howHeardOther}
+                onChange={(e) => setHowHeardOther(e.target.value)}
+                required
+              />
+            )}
+          </div>
+          <div>
+            <label className="font-semibold text-blue-900 mb-1 block">Would you be interested in...</label>
             <div className="flex flex-col gap-2">
-              {INTERESTED_IN.map(opt => (
-                <label key={opt} className="flex items-center gap-2 text-base font-normal text-blue-900">
+              {INTEREST_OPTIONS.map((option) => (
+                <label key={option} className="flex items-center gap-2 font-normal">
                   <input
                     type="checkbox"
-                    checked={interested.includes(opt)}
-                    onChange={() => handleInterestedChange(opt)}
+                    checked={interests.includes(option)}
+                    onChange={() => handleInterestChange(option)}
+                    disabled={
+                      option === "None of these" && interests.length > 0 && !interests.includes(option)
+                    }
                   />
-                  {opt}
+                  {option}
                 </label>
               ))}
             </div>
           </div>
-          {/* What interests you about LifEXP */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              What interests you about LifEXP?
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">What interests you about LifEXP?</label>
             <input
               type="text"
-              className="w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base"
-              value={interestText}
-              onChange={e => setInterestText(e.target.value)}
-              placeholder="e.g. Habit tracking, community, career quests..."
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none"
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              placeholder="Let us know!"
               required
             />
           </div>
-          {/* Anything else */}
           <div>
-            <label className="block font-semibold text-blue-900 mb-1">
-              Anything else you’d like to share?
-            </label>
+            <label className="font-semibold text-blue-900 mb-1 block">Anything else you'd like to share?</label>
             <textarea
-              className="w-full px-4 py-3 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none text-base min-h-[60px]"
-              value={extra}
-              onChange={e => setExtra(e.target.value)}
-              placeholder="(Optional)"
+              className="w-full px-4 py-2 rounded-xl border border-blue-300 focus:ring-2 focus:ring-blue-400 outline-none min-h-[64px]"
+              value={share}
+              onChange={(e) => setShare(e.target.value)}
+              placeholder="Your thoughts, suggestions, etc."
             />
           </div>
-
           {error && (
-            <div className="text-sm text-red-600 mb-2 text-center">{error}</div>
+            <div className="text-sm text-red-600 text-center mb-2">{error}</div>
           )}
-
-          <div className="flex gap-3 justify-center">
+          <div className="flex justify-between mt-6 gap-4">
             <button
               type="button"
-              className="px-5 py-2 rounded-lg border border-blue-400 bg-blue-100 text-blue-700 font-bold hover:bg-blue-200 transition"
-              onClick={() => setStep(1)}
+              className="px-6 py-2 bg-blue-100 text-blue-700 font-semibold rounded-xl hover:bg-blue-200 transition"
+              onClick={() => setStep(0)}
               disabled={loading}
             >
               Back
             </button>
             <button
               type="submit"
-              className="px-8 py-3 bg-blue-700 text-white text-lg md:text-xl font-bold rounded-full shadow-lg hover:bg-blue-800 transition"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-500 text-white font-extrabold rounded-xl shadow-lg hover:from-purple-600 hover:to-blue-600 transition text-lg"
               disabled={loading}
             >
               {loading ? "Submitting..." : "Submit Application"}
